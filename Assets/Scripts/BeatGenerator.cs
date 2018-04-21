@@ -8,9 +8,11 @@ public class BeatGenerator : MonoBehaviour
     double musicStartTime;
     bool isMusingStarted;
     float secondsBeforePlaySong = 1;
-
+    int beatCounter;
     int beatIndex = 0;
     List<Beat> beats = new List<Beat>();
+    float randomX;
+    float randomY;
 
     void Start()
     {
@@ -58,6 +60,10 @@ public class BeatGenerator : MonoBehaviour
 
     Vector3 RandomBeatPosition()
     {
-        return new Vector3(Random.Range(-5, 5), Random.Range(-3, 3), 0);
+        randomX += Random.Range(-1f, 1f);
+        randomY += Random.Range(-1f, 1f);
+        randomX = Mathf.Clamp(randomX, -5, 5);
+        randomY = Mathf.Clamp(randomY, -3, 3);
+        return new Vector3(0, 0, 1 + beatCounter++/100f);
     }
 }
