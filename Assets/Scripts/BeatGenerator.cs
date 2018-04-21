@@ -1,19 +1,30 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BeatGenerator : MonoBehaviour
 {
     public float debugStartTime;
     public GameObject beatPrefab;
     public AudioSource musicAudio;
+    public Combo combo;
+    public Text scoreText;
+
     double musicStartTime;
     bool isMusingStarted;
     float secondsBeforePlaySong = 1;
     int beatCounter;
-    int beatIndex = 0;
+    int beatIndex;
     List<Beat> beats = new List<Beat>();
-    float randomX;
-    float randomY;
+
+    Vector2 spawnDirection = Vector2.right;
+    Vector2 spawnPosition = Vector2.zero;
+    float spawnDistance = 1;
+    float spawnAngleMax = 45;
+    const float SpawnHorizontalLimit = 7;
+    const float SpawnVerticalLimit = 3.5f;
+    int comboCount;
+    int scoreCount;
 
     void Start()
     {
@@ -57,15 +68,46 @@ public class BeatGenerator : MonoBehaviour
     {
         Beat beat = Instantiate(beatPrefab, RandomBeatPosition(), Quaternion.identity).GetComponent<Beat>();
         beat.Timing = timing;
+        beat.OnBeatDone += OnBeatDone;
         beats.Add(beat);
+    }
+
+    private void OnBeatDone(bool isSuccess)
+    {
+        comboCount = isSuccess ? comboCount + 1 : 0;
+        combo.SetCombo(comboCount);
+
+        scoreCount += comboCount + (int)Mathf.Pow(comboCount, 2);
+        string scoreString = scoreCount.ToString();
+        while (scoreString.Length < 8)
+        {
+            scoreString = "0" + scoreString;
+        }
+        scoreText.text = scoreString;
     }
 
     Vector3 RandomBeatPosition()
     {
-        randomX += Random.Range(-1f, 1f);
-        randomY += Random.Range(-1f, 1f);
-        randomX = Mathf.Clamp(randomX, -5, 5);
-        randomY = Mathf.Clamp(randomY, -3, 3);
-        return new Vector3(0, 0, 1 + beatCounter++/100f);
+        spawnDirection = Quaternion.Euler(0, 0, Random.Range(-spawnAngleMax, spawnAngleMax)) * spawnDirection;
+
+
+        spawnPosition += spawnDirection * spawnDistance;
+
+        if (spawnPosition.x < -SpawnHorizontalLimit ||
+            spawnPosition.x > SpawnHorizontalLimit ||
+            spawnPosition.y < -SpawnVerticalLimit ||
+            spawnPosition.y > SpawnVerticalLimit)
+        {
+            ResetSpawnPosition();
+        }
+
+        return new Vector3(spawnPosition.x, spawnPosition.y, 100 + beatCounter++/100f);
+    }
+
+    void ResetSpawnPosition()
+    {
+        spawnPosition = new Vector2(Random.Range(-SpawnHorizontalLimit, SpawnHorizontalLimit) * 0.9f, Random.Range(-SpawnVerticalLimit, SpawnVerticalLimit) * 0.9f);
+        spawnDirection = Vector2.zero - spawnPosition;
+        spawnDirection.Normalize();
     }
 }
