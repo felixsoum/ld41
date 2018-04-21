@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class BeatGenerator : MonoBehaviour
 {
+    public float debugStartTime;
     public GameObject beatPrefab;
     public AudioSource musicAudio;
     double musicStartTime;
@@ -16,6 +17,7 @@ public class BeatGenerator : MonoBehaviour
 
     void Start()
     {
+        musicAudio.time = debugStartTime;
         Invoke("PlaySong", secondsBeforePlaySong);
     }
 
@@ -30,7 +32,7 @@ public class BeatGenerator : MonoBehaviour
     {
         if (isMusingStarted)
         {
-            double time = AudioSettings.dspTime - musicStartTime;
+            double time = AudioSettings.dspTime - musicStartTime + debugStartTime;
             while (beatIndex < BeatData.beatTimes.Length &&
                 BeatData.beatTimes[beatIndex] - Beat.ShrinkTime <= time)
             {

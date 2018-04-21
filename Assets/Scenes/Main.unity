@@ -229,6 +229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959c4fbf76f6c284994137c69c9a6977, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugStartTime: 0
   beatPrefab: {fileID: 1821240818353694, guid: c45e9221bd1fee640b4661db9472062b, type: 2}
   musicAudio: {fileID: 23345044}
 --- !u!4 &23345047
