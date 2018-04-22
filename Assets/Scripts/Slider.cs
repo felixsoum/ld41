@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Slider : Beat
 {
+    public delegate void SliderHandler(Vector3 slidePosition, Vector3 direction);
+    public event SliderHandler OnSlide;
+
+    public SpriteRenderer startRenderer;
     public SliderCollider sliderCollider;
     public LineRenderer lineRenderer;
     public GameObject endObject;
@@ -11,6 +15,8 @@ public class Slider : Beat
 
     const float maxLength = 4;
     bool isSliding;
+    public Vector3 slideDirection;
+    bool isStartFadingOut;
 
     public override void Start()
     {
@@ -18,7 +24,13 @@ public class Slider : Beat
         sliderCollider.OnSliderStart += SliderCollider_OnSliderStart;
         sliderCollider.OnSliderFinish += SliderCollider_OnSliderFinish;
         isColliderStationary = false;
+    }
+
+    public void Init()
+    {
         endObject.transform.position = GetEndPosition();
+        slideDirection = endObject.transform.position - transform.position;
+        slideDirection.Normalize();
     }
 
     public Vector3 GetEndPosition()
@@ -27,12 +39,21 @@ public class Slider : Beat
         endPos.x = -transform.position.x;
         endPos.y = -transform.position.y;
 
-        if (new Vector2(transform.position.x, transform.position.y).magnitude * 2 > maxLength)
+        if (Random.Range(0, 2) == 0)
         {
+            endPos.x *= -1;
+        }
+        else
+        {
+            endPos.y *= -1;
+        }
+
+        //if (new Vector2(transform.position.x, transform.position.y).magnitude * 2 > maxLength)
+        //{
             Vector3 dir = endPos - transform.position;
             dir.Normalize();
             endPos = transform.position + dir * maxLength;
-        }
+        //}
 
         return endPos;
     }
@@ -50,6 +71,7 @@ public class Slider : Beat
         {
             isSliding = true;
         }
+        isStartFadingOut = true;
     }
 
     private void SliderCollider_OnSliderFinish()
@@ -75,8 +97,15 @@ public class Slider : Beat
     protected override void Update()
     {
         base.Update();
-        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(0, timingRenderer.transform.position);
         lineRenderer.SetPosition(1, endObject.transform.position);
+        if (isStartFadingOut)
+        {
+            startRenderer.transform.localScale = Vector3.Lerp(startRenderer.transform.localScale, Vector3.one * 1.5f, FadeSpeed * Time.deltaTime);
+            Color color = startRenderer.color;
+            color.a = 0.25f;
+            startRenderer.color = Color.Lerp(startRenderer.color, color, FadeSpeed * Time.deltaTime);
+        }
     }
 
     public override void UpdateTime(double time)
@@ -93,6 +122,7 @@ public class Slider : Beat
                 victimPos.y = timingRenderer.transform.position.y;
                 victim.transform.position = victimPos;
             }
+            OnSlide(timingRenderer.transform.position, slideDirection);
         }
         base.UpdateTime(time);
     }

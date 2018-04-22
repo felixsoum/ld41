@@ -100,14 +100,23 @@ public class BeatGenerator : MonoBehaviour
     void SpawnSlider(SliderPair sliderPair)
     {
         Slider slider = Instantiate(sliderPrefab, RandomBeatPosition(), Quaternion.identity).GetComponent<Slider>();
+        slider.Init();
         slider.Timing = sliderPair.startTime;
         slider.TimingEnd = sliderPair.endTime;
         slider.OnBeatDone += OnBeatDone;
+        slider.OnSlide += Slider_OnSlide;
         beats.Add(slider);
 
         var sliderEndPos = slider.GetEndPosition();
         spawnPosition.x = sliderEndPos.x;
         spawnPosition.y = sliderEndPos.y;
+
+        spawnDirection = slider.slideDirection;
+    }
+
+    private void Slider_OnSlide(Vector3 slidePosition, Vector3 slideDirection)
+    {
+        player.SlideTo(slidePosition, slideDirection);
     }
 
     private void OnBeatDone(Beat beat, bool isSuccess)

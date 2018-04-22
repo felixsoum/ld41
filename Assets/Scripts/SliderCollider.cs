@@ -2,9 +2,9 @@
 
 public class SliderCollider : MonoBehaviour
 {
-    public delegate void SliderHandler();
-    public event SliderHandler OnSliderStart;
-    public event SliderHandler OnSliderFinish;
+    public delegate void SliderColliderHandler();
+    public event SliderColliderHandler OnSliderStart;
+    public event SliderColliderHandler OnSliderFinish;
 
     bool isSliderStarted;
     bool isSliderFinished;

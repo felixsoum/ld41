@@ -36,4 +36,21 @@ public class Player : MonoBehaviour
         transform.position = pos;
         transform.localScale = scale;
     }
+
+    public void SlideTo(Vector3 pos, Vector3 dir)
+    {
+        bool isLeft = dir.x < 0;
+
+        float currentOffset = offset;
+        var scale = Vector3.one;
+        if (!isLeft)
+        {
+            currentOffset *= -1;
+            scale.x *= -1;
+        }
+        pos.x += currentOffset;
+
+        transform.position = pos;
+        transform.localScale = scale;
+    }
 }
