@@ -5,6 +5,8 @@ public class Beat : MonoBehaviour
 {
     public SpriteRenderer timingRenderer;
     public SpriteRenderer beatRenderer;
+    public new Collider2D collider;
+    public AudioSource stabAudio;
 
     public GameObject victimPrefab;
     Victim victim;
@@ -18,16 +20,32 @@ public class Beat : MonoBehaviour
     public double Timing { get; set; }
     public bool IsDone { get; set; }
 
-    public delegate void BeatHandler(bool b);
+    public delegate void BeatHandler(Beat beat, bool b);
     public event BeatHandler OnBeatDone;
 
     double lastTime;
+    bool isFadingOut;
+    const float FadeSpeed = 10;
 
     void Start()
     {
         Vector3 victimPos = transform.position;
-        victimPos.z = 10 + victimPos.y;
         victim = Instantiate(victimPrefab, victimPos, Quaternion.identity).GetComponent<Victim>();
+
+        var timingPos = timingRenderer.transform.position;
+        timingPos.z = 0;
+        timingRenderer.transform.position = timingPos;
+    }
+
+    void Update()
+    {
+        if (isFadingOut)
+        {
+            beatRenderer.transform.localScale = Vector3.Lerp(beatRenderer.transform.localScale, Vector3.one * 1.5f, FadeSpeed * Time.deltaTime);
+            Color color = beatRenderer.color;
+            color.a = 0;
+            beatRenderer.color = Color.Lerp(beatRenderer.color, color, FadeSpeed * Time.deltaTime);
+        }
     }
 
     public void UpdateTime(double time)
@@ -45,27 +63,40 @@ public class Beat : MonoBehaviour
             IsDone = time > Timing + DelayTime;
             if (IsDone)
             {
-                OnBeatDone(false);
+                OnBeatDone(this, false);
                 victim.Remove();
                 victim = null;
             }
         }
     }
 
-    public void Kill()
+    public void Kill(bool isPlayerLeft = false)
     {
         if (victim)
         {
-            victim.Kill();
+            victim.Kill(isPlayerLeft);
         }
-        Destroy(gameObject);
+        collider.enabled = false;
+        timingRenderer.enabled = false;
+        isFadingOut = true;
+        Invoke("Remove", 2);
     }
 
     void OnMouseDown()
     {
         IsDone = true;
-        beatRenderer.enabled = false;
-        timingRenderer.enabled = false;
-        OnBeatDone(Mathf.Abs((float)(lastTime - Timing)) <= ErrorTreshhold);
+        bool isSuccess = Mathf.Abs((float)(lastTime - Timing)) <= ErrorTreshhold;
+        if (isSuccess)
+        {
+            stabAudio.Play();
+        }
+        OnBeatDone(this, isSuccess);
+        collider.enabled = false;
+        isFadingOut = true;
+    }
+
+    void Remove()
+    {
+        Destroy(gameObject);
     }
 }

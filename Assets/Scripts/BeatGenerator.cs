@@ -9,6 +9,7 @@ public class BeatGenerator : MonoBehaviour
     public AudioSource musicAudio;
     public Combo combo;
     public Text scoreText;
+    public Player player;
 
     double musicStartTime;
     bool isMusingStarted;
@@ -58,7 +59,7 @@ public class BeatGenerator : MonoBehaviour
                 if (beat.IsDone)
                 {
                     beats.RemoveAt(i);
-                    beat.Kill();
+                    beat.Kill(player.transform.position.x < beat.transform.position.x);
                 }
             }
         }
@@ -72,7 +73,7 @@ public class BeatGenerator : MonoBehaviour
         beats.Add(beat);
     }
 
-    private void OnBeatDone(bool isSuccess)
+    private void OnBeatDone(Beat beat, bool isSuccess)
     {
         comboCount = isSuccess ? comboCount + 1 : 0;
         combo.SetCombo(comboCount);
@@ -84,6 +85,11 @@ public class BeatGenerator : MonoBehaviour
             scoreString = "0" + scoreString;
         }
         scoreText.text = scoreString;
+
+        if (isSuccess)
+        {
+            player.MoveTo(beat.transform.position);
+        }
     }
 
     Vector3 RandomBeatPosition()
