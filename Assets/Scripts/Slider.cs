@@ -9,6 +9,7 @@ public class Slider : Beat
     public GameObject endObject;
     public double TimingEnd { get; set; }
 
+    const float maxLength = 4;
     bool isSliding;
 
     public override void Start()
@@ -17,10 +18,23 @@ public class Slider : Beat
         sliderCollider.OnSliderStart += SliderCollider_OnSliderStart;
         sliderCollider.OnSliderFinish += SliderCollider_OnSliderFinish;
         isColliderStationary = false;
+        endObject.transform.position = GetEndPosition();
+    }
+
+    public Vector3 GetEndPosition()
+    {
         Vector3 endPos = endObject.transform.position;
         endPos.x = -transform.position.x;
         endPos.y = -transform.position.y;
-        endObject.transform.position = endPos;
+
+        if (new Vector2(transform.position.x, transform.position.y).magnitude * 2 > maxLength)
+        {
+            Vector3 dir = endPos - transform.position;
+            dir.Normalize();
+            endPos = transform.position + dir * maxLength;
+        }
+
+        return endPos;
     }
 
     private void SliderCollider_OnSliderStart()
@@ -71,6 +85,7 @@ public class Slider : Beat
         {
             double timingRatio = 1 - (TimingEnd - time) / (TimingEnd - Timing);
             timingRenderer.transform.position = Vector3.Lerp(transform.position, endObject.transform.position, Mathf.Clamp01((float)timingRatio));
+            collider.transform.position = timingRenderer.transform.position;
             if (victim)
             {
                 var victimPos = victim.transform.position;

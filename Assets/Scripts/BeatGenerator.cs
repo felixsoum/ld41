@@ -31,6 +31,21 @@ public class BeatGenerator : MonoBehaviour
 
     void Start()
     {
+        if (debugStartTime > 0)
+        {
+            while (beatIndex < BeatData.beatTimes.Length &&
+    BeatData.beatTimes[beatIndex] - Beat.ShrinkTime <= debugStartTime)
+            {
+                beatIndex++;
+            }
+
+            while (sliderIndex < BeatData.sliderTimes.Length &&
+    BeatData.sliderTimes[sliderIndex].startTime - Beat.ShrinkTime <= debugStartTime)
+            {
+                sliderIndex++;
+            }
+        }
+
         musicAudio.time = debugStartTime;
         Invoke("PlaySong", secondsBeforePlaySong);
     }
@@ -89,6 +104,10 @@ public class BeatGenerator : MonoBehaviour
         slider.TimingEnd = sliderPair.endTime;
         slider.OnBeatDone += OnBeatDone;
         beats.Add(slider);
+
+        var sliderEndPos = slider.GetEndPosition();
+        spawnPosition.x = sliderEndPos.x;
+        spawnPosition.y = sliderEndPos.y;
     }
 
     private void OnBeatDone(Beat beat, bool isSuccess)

@@ -120,8 +120,11 @@ public class Beat : MonoBehaviour
     protected void Fail()
     {
         OnBeatDone(this, false);
-        victim.Remove();
-        victim = null;
+        if (victim)
+        {
+            victim.Remove();
+            victim = null;
+        }
     }
 
     public virtual Vector3 GetPosForPlayer()

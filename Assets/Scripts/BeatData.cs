@@ -33,7 +33,10 @@ public class BeatData : MonoBehaviour
         14.7, 14.95, 15.2, 15.45,
         15.7, 15.95, 16.2,
 
-        16.95, 17.075, 17.45, 17.7
+        16.95, 17.075, 17.45, 17.7,
+        // Slider
+        18.9, 19, 19.1,
+        19.45, 19.7, 19.95, 20.2, 20.45, 20.7
 
         //17.05, 17.12, 17.27,  17.42, // slider - 18.05 - 18.43,
         //18.67, 19.05, 19.17, 19.27, 19.35, 20, 20.13, 20.27,
@@ -49,6 +52,6 @@ public class BeatData : MonoBehaviour
 
     public static SliderPair[] sliderTimes = new SliderPair[]
     {
-        new SliderPair(20, 25)
+        new SliderPair(18.2, 18.8)
     };
 }
