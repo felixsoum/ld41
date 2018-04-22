@@ -16,14 +16,14 @@ public class Victim : MonoBehaviour
     float killFadeAnimSpeed = 1;
     float targetKillRotZ = -90;
     float currentKillRotZ;
-    Vector3 spawnPos;
+    Vector3 deadSpawnPos;
 
     void Start()
     {
         int victimIndex = Random.Range(0, sprites.Length);
         aliveSprite.sprite = sprites[victimIndex];
         deadSprite.sprite = sprites[victimIndex];
-        spawnPos = transform.position;
+        deadSpawnPos = deadSprite.transform.localPosition;
     }
 
     void Update()
@@ -34,8 +34,8 @@ public class Victim : MonoBehaviour
 
         if (isKilled)
         {
-            deadSprite.transform.position = Vector3.Lerp(deadSprite.transform.position,
-                spawnPos + killOffsetPos, killFallAnimSpeed * Time.deltaTime);
+            deadSprite.transform.localPosition = Vector3.Lerp(deadSprite.transform.localPosition,
+                deadSpawnPos + killOffsetPos, killFallAnimSpeed * Time.deltaTime);
 
             currentKillRotZ = Mathf.Lerp(currentKillRotZ, targetKillRotZ, killFallAnimSpeed * Time.deltaTime);
             deadSprite.transform.eulerAngles = new Vector3(0, 0, currentKillRotZ);

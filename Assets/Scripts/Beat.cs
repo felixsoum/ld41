@@ -25,7 +25,7 @@ public class Beat : MonoBehaviour
 
     double lastTime;
     bool isFadingOut;
-    const float FadeSpeed = 10;
+    const float FadeSpeed = 15;
 
     void Start()
     {
@@ -43,7 +43,7 @@ public class Beat : MonoBehaviour
         {
             beatRenderer.transform.localScale = Vector3.Lerp(beatRenderer.transform.localScale, Vector3.one * 1.5f, FadeSpeed * Time.deltaTime);
             Color color = beatRenderer.color;
-            color.a = 0;
+            color.a = 0.25f;
             beatRenderer.color = Color.Lerp(beatRenderer.color, color, FadeSpeed * Time.deltaTime);
         }
     }
@@ -79,7 +79,7 @@ public class Beat : MonoBehaviour
         collider.enabled = false;
         timingRenderer.enabled = false;
         isFadingOut = true;
-        Invoke("Remove", 2);
+        Invoke("Remove", 0.2f);
     }
 
     void OnMouseDown()
