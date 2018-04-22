@@ -6,6 +6,7 @@ public class BeatGenerator : MonoBehaviour
 {
     public float debugStartTime;
     public GameObject beatPrefab;
+    public GameObject sliderPrefab;
     public AudioSource musicAudio;
     public Combo combo;
     public Text scoreText;
@@ -16,6 +17,7 @@ public class BeatGenerator : MonoBehaviour
     float secondsBeforePlaySong = 1;
     int beatCounter;
     int beatIndex;
+    int sliderIndex;
     List<Beat> beats = new List<Beat>();
 
     Vector2 spawnDirection = Vector2.right;
@@ -52,6 +54,13 @@ public class BeatGenerator : MonoBehaviour
                 beatIndex++;
             }
 
+            while (sliderIndex < BeatData.sliderTimes.Length &&
+                BeatData.sliderTimes[sliderIndex].startTime - Beat.ShrinkTime <= time)
+            {
+                SpawnSlider(BeatData.sliderTimes[sliderIndex]);
+                sliderIndex++;
+            }
+
             for (int i = beats.Count - 1; i >= 0; i--)
             {
                 Beat beat = beats[i];
@@ -59,7 +68,7 @@ public class BeatGenerator : MonoBehaviour
                 if (beat.IsDone)
                 {
                     beats.RemoveAt(i);
-                    beat.Kill(player.transform.position.x < beat.transform.position.x);
+                    beat.Kill(player.transform.position.x < beat.GetPosForPlayer().x);
                 }
             }
         }
@@ -71,6 +80,15 @@ public class BeatGenerator : MonoBehaviour
         beat.Timing = timing;
         beat.OnBeatDone += OnBeatDone;
         beats.Add(beat);
+    }
+
+    void SpawnSlider(SliderPair sliderPair)
+    {
+        Slider slider = Instantiate(sliderPrefab, RandomBeatPosition(), Quaternion.identity).GetComponent<Slider>();
+        slider.Timing = sliderPair.startTime;
+        slider.TimingEnd = sliderPair.endTime;
+        slider.OnBeatDone += OnBeatDone;
+        beats.Add(slider);
     }
 
     private void OnBeatDone(Beat beat, bool isSuccess)
@@ -88,7 +106,7 @@ public class BeatGenerator : MonoBehaviour
 
         if (isSuccess)
         {
-            player.MoveTo(beat.transform.position);
+            player.MoveTo(beat.GetPosForPlayer());
         }
     }
 

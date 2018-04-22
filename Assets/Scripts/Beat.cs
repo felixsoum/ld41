@@ -9,9 +9,9 @@ public class Beat : MonoBehaviour
     public AudioSource stabAudio;
 
     public GameObject victimPrefab;
-    Victim victim;
+    protected Victim victim;
 
-    float timingObjectInitialScale = 4;
+    public const float timingObjectInitialScale = 4;
 
     public const double ShrinkTime = 1;
     public const double DelayTime = 0.5f;
@@ -23,11 +23,12 @@ public class Beat : MonoBehaviour
     public delegate void BeatHandler(Beat beat, bool b);
     public event BeatHandler OnBeatDone;
 
-    double lastTime;
-    bool isFadingOut;
-    const float FadeSpeed = 15;
+    protected double lastTime;
+    protected bool isFadingOut;
+    protected const float FadeSpeed = 15;
+    protected bool isColliderStationary = true;
 
-    void Start()
+    public virtual void Start()
     {
         Vector3 victimPos = transform.position;
         victim = Instantiate(victimPrefab, victimPos, Quaternion.identity).GetComponent<Victim>();
@@ -37,7 +38,7 @@ public class Beat : MonoBehaviour
         timingRenderer.transform.position = timingPos;
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if (isFadingOut)
         {
@@ -48,7 +49,7 @@ public class Beat : MonoBehaviour
         }
     }
 
-    public void UpdateTime(double time)
+    public virtual void UpdateTime(double time)
     {
         lastTime = time;
         double timingRatio = 1 - (Timing - time) / ShrinkTime;
@@ -58,14 +59,22 @@ public class Beat : MonoBehaviour
         color.a = (float)timingRatio;
         timingRenderer.color = color;
 
+        CheckDoneCondition(time);
+    }
+
+    public virtual double GetEndTiming()
+    {
+        return Timing;
+    }
+
+    public virtual void CheckDoneCondition(double time)
+    {
         if (!IsDone)
         {
             IsDone = time > Timing + DelayTime;
             if (IsDone)
             {
-                OnBeatDone(this, false);
-                victim.Remove();
-                victim = null;
+                Fail();
             }
         }
     }
@@ -84,19 +93,39 @@ public class Beat : MonoBehaviour
 
     void OnMouseDown()
     {
-        IsDone = true;
-        bool isSuccess = Mathf.Abs((float)(lastTime - Timing)) <= ErrorTreshhold;
-        if (isSuccess)
+        if (isColliderStationary)
         {
-            stabAudio.Play();
+            IsDone = true;
+            bool isSuccess = Mathf.Abs((float)(lastTime - Timing)) <= ErrorTreshhold;
+            if (isSuccess)
+            {
+                stabAudio.Play();
+            }
+            OnBeatDone(this, isSuccess);
+            collider.enabled = false;
+            isFadingOut = true;
         }
-        OnBeatDone(this, isSuccess);
-        collider.enabled = false;
-        isFadingOut = true;
     }
 
     void Remove()
     {
         Destroy(gameObject);
+    }
+
+    protected void DoBeatDone(bool isSuccess)
+    {
+        OnBeatDone(this, isSuccess);
+    }
+
+    protected void Fail()
+    {
+        OnBeatDone(this, false);
+        victim.Remove();
+        victim = null;
+    }
+
+    public virtual Vector3 GetPosForPlayer()
+    {
+        return transform.position;
     }
 }

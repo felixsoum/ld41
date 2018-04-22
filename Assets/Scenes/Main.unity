@@ -231,6 +231,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debugStartTime: 0
   beatPrefab: {fileID: 1821240818353694, guid: c45e9221bd1fee640b4661db9472062b, type: 2}
+  sliderPrefab: {fileID: 1845565729510280, guid: 70aace93337d9474681a6cead70988e1,
+    type: 2}
   musicAudio: {fileID: 23345044}
   combo: {fileID: 368659556}
   scoreText: {fileID: 2008795848}

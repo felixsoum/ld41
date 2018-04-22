@@ -1,6 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+
+public struct SliderPair
+{
+    public double startTime;
+    public double endTime;
+
+    public SliderPair(double start, double end)
+    {
+        startTime = start;
+        endTime = end;
+    }
+}
 
 public class BeatData : MonoBehaviour
 {
@@ -35,5 +45,10 @@ public class BeatData : MonoBehaviour
         //28.07, 28.17, 28.32, 28.37, 29.1, 29.15, 29.3, 29.43,
         //30.05, 30.2, 30.3, 30.45, //slider - 31.03 - 31.45,
 
+    };
+
+    public static SliderPair[] sliderTimes = new SliderPair[]
+    {
+        new SliderPair(20, 25)
     };
 }
