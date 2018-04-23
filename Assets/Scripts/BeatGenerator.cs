@@ -31,15 +31,17 @@ public class BeatGenerator : MonoBehaviour
 
     void Start()
     {
+        BeatData.RepeatChorus();
+
         if (debugStartTime > 0)
         {
-            while (beatIndex < BeatData.beatTimes.Length &&
+            while (beatIndex < BeatData.beatTimes.Count &&
     BeatData.beatTimes[beatIndex] - Beat.ShrinkTime <= debugStartTime)
             {
                 beatIndex++;
             }
 
-            while (sliderIndex < BeatData.sliderTimes.Length &&
+            while (sliderIndex < BeatData.sliderTimes.Count &&
     BeatData.sliderTimes[sliderIndex].startTime - Beat.ShrinkTime <= debugStartTime)
             {
                 sliderIndex++;
@@ -62,14 +64,14 @@ public class BeatGenerator : MonoBehaviour
         if (isMusingStarted)
         {
             double time = AudioSettings.dspTime - musicStartTime + debugStartTime;
-            while (beatIndex < BeatData.beatTimes.Length &&
+            while (beatIndex < BeatData.beatTimes.Count &&
                 BeatData.beatTimes[beatIndex] - Beat.ShrinkTime <= time)
             {
                 SpawnBeat(BeatData.beatTimes[beatIndex]);
                 beatIndex++;
             }
 
-            while (sliderIndex < BeatData.sliderTimes.Length &&
+            while (sliderIndex < BeatData.sliderTimes.Count &&
                 BeatData.sliderTimes[sliderIndex].startTime - Beat.ShrinkTime <= time)
             {
                 SpawnSlider(BeatData.sliderTimes[sliderIndex]);

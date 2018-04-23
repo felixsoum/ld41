@@ -48,12 +48,9 @@ public class Slider : Beat
             endPos.y *= -1;
         }
 
-        //if (new Vector2(transform.position.x, transform.position.y).magnitude * 2 > maxLength)
-        //{
-            Vector3 dir = endPos - transform.position;
-            dir.Normalize();
-            endPos = transform.position + dir * maxLength;
-        //}
+        Vector3 dir = endPos - transform.position;
+        dir.Normalize();
+        endPos = transform.position + dir * maxLength;
 
         return endPos;
     }
@@ -72,6 +69,7 @@ public class Slider : Beat
             isSliding = true;
         }
         isStartFadingOut = true;
+        Invoke("HideStartBeat", 0.2f);
     }
 
     private void SliderCollider_OnSliderFinish()
@@ -162,5 +160,10 @@ public class Slider : Beat
     public override Vector3 GetPosForPlayer()
     {
         return timingRenderer.transform.position;
+    }
+
+    void HideStartBeat()
+    {
+        startRenderer.enabled = false;
     }
 }

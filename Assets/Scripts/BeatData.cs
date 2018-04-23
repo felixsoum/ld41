@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public struct SliderPair
 {
@@ -14,7 +15,7 @@ public struct SliderPair
 
 public class BeatData : MonoBehaviour
 {
-    public static double[] beatTimes = new double[]
+    public static List<double> beatTimes = new List<double>()
     {
         1.2, 1.7, 2.2,
         2.7, 2.95, 3.2,
@@ -33,26 +34,48 @@ public class BeatData : MonoBehaviour
         14.7, 14.95, 15.2, 15.45,
         15.7, 15.95, 16.2,
 
+        // Chorus
         16.95, 17.075, 17.45, 17.7,
         // Slider
         18.9, 19, 19.1,
         19.45, 19.7, 19.95, 20.2, 20.45, 20.7,
-        20.95, 21.05, 21.15, 21.45, 21.7
+        20.95, 21.05, 21.15, 21.45, 21.7,
+        22.2, 22.3, 22.45, 22.55,
+        // Slider
+        23.95, 24.05, 24.15, 24.45, 24.7,
+        24.95, 25.075, 25.2, 25.45, 25.7, 25.95, 26.2,
+        26.45, 26.55,
+        // Slider
+        28.2, 28.45, 28.7, 28.8,
 
-        //17.05, 17.12, 17.27,  17.42, // slider - 18.05 - 18.43,
-        //18.67, 19.05, 19.17, 19.27, 19.35, 20, 20.13, 20.27,
-        //20.38, 20.48, 21.06, 21.18, 21.28, 21.42, 22.1,
-        //22.18, 22.32, 22.38, //slider 22.45 - 23.83,
-        //24, 24.18, 24.28, 24.43, 25.05, 25.15, 25.22, 25.28,
-        //25.43, 26.08, 26.21, 26.3, 26.37, //slider - 26.83 - 28,
-
-        //28.07, 28.17, 28.32, 28.37, 29.1, 29.15, 29.3, 29.43,
-        //30.05, 30.2, 30.3, 30.45, //slider - 31.03 - 31.45,
-
+        29.2, 29.3, 29.45, 29.7, 29.95, 30.2, 30.45, 30.7, 30.95,
+        // Slider
+        32.2, 32.45, 32.7, 32.8
     };
 
-    public static SliderPair[] sliderTimes = new SliderPair[]
+    public static List<SliderPair> sliderTimes = new List<SliderPair>()
     {
-        new SliderPair(18.2, 18.8)
+        new SliderPair(18.2, 18.8),
+        new SliderPair(22.7, 23.7),
+        new SliderPair(26.95, 27.95),
+        new SliderPair(31.2, 31.95),
     };
+
+    public static void RepeatChorus()
+    {
+        int startIndex = beatTimes.IndexOf(16.95);
+        int endIndex = beatTimes.Count - 1;
+        double offset = 33.2 - 16.95;
+        for (int i = startIndex; i <= endIndex; i++)
+        {
+            beatTimes.Add(beatTimes[i] + offset);
+        }
+
+        endIndex = sliderTimes.Count - 1;
+        for (int i = 0; i <= endIndex; i++)
+        {
+            var pair = sliderTimes[i];
+            sliderTimes.Add(new SliderPair(pair.startTime + offset, pair.endTime + offset));
+        }
+    }
 }
