@@ -26,10 +26,10 @@ public class SliderCollider : MonoBehaviour
 
     void OnMouseExit()
     {
-        if (isSliderStarted && !isSliderFinished)
-        {
-            isSliderFinished = true;
-            OnSliderFinish();
-        }
+        //if (isSliderStarted && !isSliderFinished)
+        //{
+        //    isSliderFinished = true;
+        //    OnSliderFinish();
+        //}
     }
 }
