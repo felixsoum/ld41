@@ -101,7 +101,7 @@ public class BeatGenerator : MonoBehaviour
 
     void SpawnSlider(SliderPair sliderPair)
     {
-        Slider slider = Instantiate(sliderPrefab, RandomBeatPosition(), Quaternion.identity).GetComponent<Slider>();
+        Slider slider = Instantiate(sliderPrefab, RandomBeatPosition(true), Quaternion.identity).GetComponent<Slider>();
         slider.Init();
         slider.Timing = sliderPair.startTime;
         slider.TimingEnd = sliderPair.endTime;
@@ -140,12 +140,32 @@ public class BeatGenerator : MonoBehaviour
         }
     }
 
-    Vector3 RandomBeatPosition()
+    Vector3 RandomBeatPosition(bool isSlider = false)
     {
-        spawnDirection = Quaternion.Euler(0, 0, Random.Range(-spawnAngleMax, spawnAngleMax)) * spawnDirection;
 
+        float currentSpawnDistance = spawnDistance;
+        bool isFastBeat = false;
 
-        spawnPosition += spawnDirection * spawnDistance;
+        if (!isSlider && beatIndex > 0)
+        {
+            double timeDiff = BeatData.beatTimes[beatIndex] - BeatData.beatTimes[beatIndex - 1];
+            if (timeDiff < 0.2)
+            {
+                isFastBeat = true;
+            }
+        }
+        
+        if (!isFastBeat)
+        {
+            spawnDirection = Quaternion.Euler(0, 0, Random.Range(-spawnAngleMax, spawnAngleMax)) * spawnDirection;
+
+        }
+        else
+        {
+            currentSpawnDistance /= 4;
+        }
+
+        spawnPosition += spawnDirection * currentSpawnDistance;
 
         if (spawnPosition.x < -SpawnHorizontalLimit ||
             spawnPosition.x > SpawnHorizontalLimit ||

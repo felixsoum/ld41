@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Slider : Beat
 {
     public delegate void SliderHandler(Vector3 slidePosition, Vector3 direction);
     public event SliderHandler OnSlide;
 
+    public AudioSource slideAudio;
     public SpriteRenderer startRenderer;
     public SliderCollider sliderCollider;
     public LineRenderer lineRenderer;
@@ -67,6 +66,7 @@ public class Slider : Beat
         else
         {
             isSliding = true;
+            slideAudio.Play();
         }
         isStartFadingOut = true;
         Invoke("HideStartBeat", 0.2f);
