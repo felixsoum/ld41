@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BeatGenerator : MonoBehaviour
@@ -11,10 +12,11 @@ public class BeatGenerator : MonoBehaviour
     public Combo combo;
     public Text scoreText;
     public Player player;
+    public GameObject fade;
 
     double musicStartTime;
     bool isMusingStarted;
-    float secondsBeforePlaySong = 1;
+    float secondsBeforePlaySong = 2;
     int beatCounter;
     int beatIndex;
     int sliderIndex;
@@ -28,6 +30,7 @@ public class BeatGenerator : MonoBehaviour
     const float SpawnVerticalLimit = 3.5f;
     int comboCount;
     int scoreCount;
+    bool isDone;
 
     void Start()
     {
@@ -88,7 +91,18 @@ public class BeatGenerator : MonoBehaviour
                     beat.Kill(player.transform.position.x < beat.GetPosForPlayer().x);
                 }
             }
+
+            if (!isDone && beatIndex == BeatData.beatTimes.Count)
+            {
+                isDone = true;
+                Invoke("Fade", 3f);
+            }
         }
+    }
+
+    void Fade()
+    {
+        fade.SetActive(true);
     }
 
     void SpawnBeat(double timing)
@@ -183,5 +197,10 @@ public class BeatGenerator : MonoBehaviour
         spawnPosition = new Vector2(Random.Range(-SpawnHorizontalLimit, SpawnHorizontalLimit) * 0.9f, Random.Range(-SpawnVerticalLimit, SpawnVerticalLimit) * 0.9f);
         spawnDirection = Vector2.zero - spawnPosition;
         spawnDirection.Normalize();
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene("Main");
     }
 }

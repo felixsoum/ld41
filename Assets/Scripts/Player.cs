@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
         Vector3 pos = transform.position;
         pos.z = 9.999f + pos.y;
         transform.position = pos;
+
+        transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(Mathf.Sign(transform.localScale.x) * 1, 1, 1), 2 * Time.deltaTime);
     }
 
     public void MoveTo(Vector3 pos)
